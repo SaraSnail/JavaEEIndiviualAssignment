@@ -62,8 +62,7 @@ public class MemberServiceImpl implements MemberService {
             }
 
         }
-        //throw new ResourceNotFoundException("Member", "id", id);
-        return new ResponseEntity<>("Member with id '"+ id +"' not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Couldn't find a member with id '"+ id +"'", HttpStatus.NOT_FOUND);
     }
 
 
@@ -89,7 +88,7 @@ public class MemberServiceImpl implements MemberService {
             return new ResponseEntity<>("Member with id "+id+" deleted successfully",HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("Member with id "+ id +" not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Couldn't find a member with id '"+ id +"'", HttpStatus.NOT_FOUND);
     }
 
     @Override

@@ -37,3 +37,23 @@ h1{
     margin-top: 20px;
     margin-left: 20px;
 }
+button{
+    background-color: #8b786d;
+    cursor: pointer;
+    color: white;
+    text-align: center;
+    box-shadow: 0 7px #283044;
+    border-radius: 15px;
+    font-family: "Courier New",sans-serif;
+    padding: 10px 20px;
+}
+button:hover{
+    background-color: #ebf5ee;
+    color: #283044;
+}
+button:active{
+    background-color: #ebf5ee;
+    box-shadow: 0 4px #283044;
+    color: #283044;
+    transform: translateY(3px);
+}
