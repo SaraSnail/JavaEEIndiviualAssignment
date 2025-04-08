@@ -7,11 +7,11 @@
 </head>
 <body>
 
-<div th:if="${members == null or members.size()==0}">
-  <p class="title" th:text="No members found"></p>
+<div th:if="${members.size() == 0}">
+  <h1>No members found</h1>
 </div>
 
-<div th:unless="${members == null or members.size() == 0}">
+<div th:unless="${members.size() == 0}">
   <h1 th:text="${'Members count: ' + members.size()}"></h1>
 
   <table>

@@ -23,13 +23,6 @@ tr:nth-child(even){
 tr:hover{
     background-color: #bfa89e;
 }
-.title{
-    color:#8b786d;
-    font-size: 2.1em;
-    font-family: "Courier New", sans-serif;
-    margin-top: 20px;
-    margin-left: 20px;
-}
 h1{
     color:#8b786d;
     font-size: 2.1em;

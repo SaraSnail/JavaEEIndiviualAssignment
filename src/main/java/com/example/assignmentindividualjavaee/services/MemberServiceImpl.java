@@ -27,9 +27,6 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public List<Member> getAllMembers() {
-        if(memberRepository.findAll().isEmpty()) {
-            throw new RuntimeException("Members repository is empty");
-        }
         return memberRepository.findAll();
     }
 
@@ -46,21 +43,28 @@ public class MemberServiceImpl implements MemberService {
     public ResponseEntity<String> updateMember(Member member, Long id) {
         Optional<Member>findMember = memberRepository.findById(id);
         if (findMember.isPresent()) {
-            notNullMember(member);
 
-            Optional<Address>findAddress = addressRepository.findById(member.getAddress().getId());
-            if (findAddress.isPresent()) {
+            if(memberNotNull(member)) {
+                Optional<Address> findAddress = addressRepository.findById(member.getAddress().getId());
+                if (findAddress.isPresent()) {
+                    member.setId(id);
+                    member.setAddress(findAddress.get());
+
+                    memberRepository.save(member);
+
+                    return new ResponseEntity<>("Member with id " + id + " updated successfully", HttpStatus.OK);
+
+                } else {
+                    throw new ResourceNotFoundException("Address", "id", member.getAddress().getId());
+                }
+            }else {
+
                 member.setId(id);
-                member.setAddress(findAddress.get());
-
+                addressRepository.save(member.getAddress());
                 memberRepository.save(member);
 
                 return new ResponseEntity<>("Member with id " + id + " updated successfully", HttpStatus.OK);
-
-            }else {
-                throw new ResourceNotFoundException("Address", "id", member.getAddress().getId());
             }
-
         }
         return new ResponseEntity<>("Couldn't find a member with id '"+ id +"'", HttpStatus.NOT_FOUND);
     }
@@ -68,14 +72,19 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member addMember(Member member) {
-        notNullMember(member);
-        Optional<Address>findAddress = addressRepository.findById(member.getAddress().getId());
-        if (findAddress.isPresent()) {
-            member.setAddress(findAddress.get());
-            return memberRepository.save(member);
+        if(memberNotNull(member)) {
+            Optional<Address>findAddress = addressRepository.findById(member.getAddress().getId());
+            if (findAddress.isPresent()) {
+                member.setAddress(findAddress.get());
+                return memberRepository.save(member);
+            }else {
+                throw new ResourceNotFoundException("Address", "id", member.getAddress().getId());
+            }
         }else {
-            throw new ResourceNotFoundException("Address", "id", member.getAddress().getId());
+            addressRepository.save(member.getAddress());
+            return memberRepository.save(member);
         }
+
 
     }
 
@@ -106,11 +115,10 @@ public class MemberServiceImpl implements MemberService {
 
 
 
-    private void notNullMember(Member member) {
-        System.out.println(member.toString());
+    private boolean memberNotNull(Member member) {
 
         if (member.getAddress() == null) {
-            throw new MissingParameterException("Address","class Address",member.getAddress());
+            throw new MissingParameterException("Address","Address object",member.getAddress());
         }
 
 
@@ -127,11 +135,35 @@ public class MemberServiceImpl implements MemberService {
             throw new MissingParameterException("dateOfBirth","LocalDate",member.getDateOfBirth());
         }
 
+        return addressNotNull(member);
 
-        if(member.getAddress().getId() == null){
-            throw new MissingParameterException("Address.id","Long",member.getAddress().getId());
+    }
 
+    private boolean addressNotNull(Member member){
+        if(member.getAddress().getPostalCode() == null
+                && member.getAddress().getCity() == null
+                && member.getAddress().getStreet() == null)
+        {
+
+            if(member.getAddress().getId() != null){
+                return true;
+            }else {
+                throw new MissingParameterException("Address.id","Long",member.getAddress().getId());
+            }
+
+        }else {
+
+            if (member.getAddress().getCity() == null || member.getAddress().getCity().isEmpty()) {
+                throw new MissingParameterException("city", "String", member.getAddress().getCity());
+            }
+            if (member.getAddress().getStreet() == null || member.getAddress().getStreet().isEmpty()) {
+                throw new MissingParameterException("street", "String", member.getAddress().getStreet());
+            }
+            if (member.getAddress().getPostalCode() == null || member.getAddress().getPostalCode().isEmpty()) {
+                throw new MissingParameterException("postalCode", "String", member.getAddress().getPostalCode());
+            }
         }
 
+        return false;
     }
 }
