@@ -31,22 +31,25 @@ h1{
     margin-left: 20px;
 }
 button{
-    background-color: #8b786d;
+    background-color: #b23a48;
     cursor: pointer;
     color: white;
     text-align: center;
-    box-shadow: 0 7px #283044;
+    box-shadow: 0 7px #6c232b;
     border-radius: 15px;
+    border-color: #9a323e;
     font-family: "Courier New",sans-serif;
     padding: 10px 20px;
 }
 button:hover{
-    background-color: #ebf5ee;
-    color: #283044;
+    background-color: #dc939c;
+    box-shadow: 0 7px #b23a48;
+    color: black;
 }
 button:active{
-    background-color: #ebf5ee;
-    box-shadow: 0 4px #283044;
-    color: #283044;
+    background-color: #6c232b;
+    box-shadow: 0 4px #3e1419;
+    border-color: #b23a48;
+    color: white;
     transform: translateY(3px);
 }
