@@ -19,6 +19,7 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
+
     @Autowired
     public MemberServiceImpl(MemberRepository memberRepository, AddressRepository addressRepository) {
         this.memberRepository = memberRepository;
@@ -41,10 +42,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public ResponseEntity<String> updateMember(Member member, Long id) {
-        Optional<Member>findMember = memberRepository.findById(id);
-        if (findMember.isPresent()) {
+        if (memberRepository.existsById(id)) {
+            if(isMemberNotNullButWithAddressId(member)) {
 
-            if(isMemberNull(member)) {
                 Optional<Address> findAddress = addressRepository.findById(member.getAddress().getId());
                 if (findAddress.isPresent()) {
                     member.setId(id);
@@ -72,11 +72,13 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member addMember(Member member) {
-        if(isMemberNull(member)) {
+        if(isMemberNotNullButWithAddressId(member)) {
+
             Optional<Address>findAddress = addressRepository.findById(member.getAddress().getId());
             if (findAddress.isPresent()) {
                 member.setAddress(findAddress.get());
                 return memberRepository.save(member);
+
             }else {
                 throw new ResourceNotFoundException("Address", "id", member.getAddress().getId());
             }
@@ -90,11 +92,10 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public ResponseEntity<String> deleteMember(Long id) {
-        Optional<Member> memberOptional = memberRepository.findById(id);
 
-        if (memberOptional.isPresent()) {
+        if(memberRepository.existsById(id)) {
             memberRepository.deleteById(id);
-            return new ResponseEntity<>("Member with id "+id+" deleted successfully",HttpStatus.OK);
+            return new ResponseEntity<>("Member with id " + id + " deleted successfully", HttpStatus.OK);
         }
 
         throw new ResourceNotFoundException("Member", "id", id);
@@ -102,9 +103,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void deleteMemberById(Long id) {
-        Optional<Member> memberOptional = memberRepository.findById(id);
 
-        if (memberOptional.isPresent()) {
+        if (memberRepository.existsById(id)) {
             memberRepository.deleteById(id);
 
         }else {
@@ -114,7 +114,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
-    private boolean isMemberNull(Member member) {
+    private boolean isMemberNotNullButWithAddressId(Member member) {
 
         if (member.getAddress() == null) {
             throw new MissingParameterException("Address","Address object",member.getAddress());
@@ -134,11 +134,11 @@ public class MemberServiceImpl implements MemberService {
             throw new MissingParameterException("dateOfBirth","LocalDate",member.getDateOfBirth());
         }
 
-        return isAddressNullOrDoesItHaveAddressId(member);
+        return isAddressNullButHaveAddressId(member);
 
     }
 
-    private boolean isAddressNullOrDoesItHaveAddressId(Member member){
+    private boolean isAddressNullButHaveAddressId(Member member){
         if(member.getAddress().getPostalCode() == null
                 && member.getAddress().getCity() == null
                 && member.getAddress().getStreet() == null)
