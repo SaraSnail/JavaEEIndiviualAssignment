@@ -31,8 +31,7 @@
       <td th:text="${member.id}"></td>
       <td th:text="${member.firstName + ' ' + member.lastName}"></td>
       <td th:text="${member.email}"></td>
-      <td th:if="${member.phone == null}" th:text="'Not given'"></td>
-      <td th:unless="${member.phone == null}" th:text="${member.phone}"></td>
+      <td th:text="${member.phone == null ? 'Not given' : member.phone}"></td>
       <td th:text="${member.address.getStreet() + ' in ' + member.address.city + ' (' + member.address.postalCode + ')'}"></td>
       <td th:text="${member.dateOfBirth}"></td>
       <td>

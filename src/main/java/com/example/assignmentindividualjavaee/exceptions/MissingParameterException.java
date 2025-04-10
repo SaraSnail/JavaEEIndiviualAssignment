@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class MissingParameterException extends RuntimeException {
-    private String object;
-    private String field;
-    private Object value;
+    private final String object;
+    private final String field;
+    private final Object value;
 
     public MissingParameterException(String object,String field, Object value) {
         super(String.format("'%s' requires %s, it can't be '%s'", object,field, value));

@@ -1,7 +1,6 @@
 package com.example.assignmentindividualjavaee.entities;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity

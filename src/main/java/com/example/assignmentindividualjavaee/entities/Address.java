@@ -1,8 +1,6 @@
 package com.example.assignmentindividualjavaee.entities;
 
-
 import jakarta.persistence.*;
-
 
 @Entity
 public class Address {

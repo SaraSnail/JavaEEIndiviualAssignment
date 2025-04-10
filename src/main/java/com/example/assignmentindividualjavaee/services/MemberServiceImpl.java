@@ -44,7 +44,7 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member>findMember = memberRepository.findById(id);
         if (findMember.isPresent()) {
 
-            if(memberNotNull(member)) {
+            if(isMemberNull(member)) {
                 Optional<Address> findAddress = addressRepository.findById(member.getAddress().getId());
                 if (findAddress.isPresent()) {
                     member.setId(id);
@@ -66,13 +66,13 @@ public class MemberServiceImpl implements MemberService {
                 return new ResponseEntity<>("Member with id " + id + " updated successfully", HttpStatus.OK);
             }
         }
-        return new ResponseEntity<>("Couldn't find a member with id '"+ id +"'", HttpStatus.NOT_FOUND);
+        throw new ResourceNotFoundException("Member", "id", id);
     }
 
 
     @Override
     public Member addMember(Member member) {
-        if(memberNotNull(member)) {
+        if(isMemberNull(member)) {
             Optional<Address>findAddress = addressRepository.findById(member.getAddress().getId());
             if (findAddress.isPresent()) {
                 member.setAddress(findAddress.get());
@@ -97,7 +97,7 @@ public class MemberServiceImpl implements MemberService {
             return new ResponseEntity<>("Member with id "+id+" deleted successfully",HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("Couldn't find a member with id '"+ id +"'", HttpStatus.NOT_FOUND);
+        throw new ResourceNotFoundException("Member", "id", id);
     }
 
     @Override
@@ -114,8 +114,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
-
-    private boolean memberNotNull(Member member) {
+    private boolean isMemberNull(Member member) {
 
         if (member.getAddress() == null) {
             throw new MissingParameterException("Address","Address object",member.getAddress());
@@ -135,11 +134,11 @@ public class MemberServiceImpl implements MemberService {
             throw new MissingParameterException("dateOfBirth","LocalDate",member.getDateOfBirth());
         }
 
-        return addressNotNull(member);
+        return isAddressNullOrDoesItHaveAddressId(member);
 
     }
 
-    private boolean addressNotNull(Member member){
+    private boolean isAddressNullOrDoesItHaveAddressId(Member member){
         if(member.getAddress().getPostalCode() == null
                 && member.getAddress().getCity() == null
                 && member.getAddress().getStreet() == null)
